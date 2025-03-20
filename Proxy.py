@@ -35,7 +35,7 @@ try:
   # Bind the the server socket to a host and port
   # ~~~~ INSERT CODE ~~~~
 
-  # Bind the socket to the host and port (as a tuple) got from arguments.
+  # Bind the socket to the host and port (in a tuple) got from arguments.
   serverSocket.bind((proxyHost, proxyPort))
 
   # ~~~~ END CODE INSERT ~~~~
@@ -47,6 +47,10 @@ except:
 try:
   # Listen on the server socket
   # ~~~~ INSERT CODE ~~~~
+
+  # Start listening to TCP requests
+  serverSocket.listen(1)
+
   # ~~~~ END CODE INSERT ~~~~
   print ('Listening to socket')
 except:
@@ -61,6 +65,10 @@ while True:
   # Accept connection from client and store in the clientSocket
   try:
     # ~~~~ INSERT CODE ~~~~
+
+    # Accepting a connection and storing it in clientSocket.
+    clientSocket, addr = serverSocket.accept()
+
     # ~~~~ END CODE INSERT ~~~~
     print ('Received a connection')
   except:
