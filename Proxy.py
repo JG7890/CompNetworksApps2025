@@ -177,8 +177,8 @@ while True:
       # originServerRequestHeader is the second line in the request
       # ~~~~ INSERT CODE ~~~~
 
-      # Request line is formatted "METHOD URI VERSION".
-      originServerRequest = method + ' /' + URI + ' ' + version
+      # Request line is formatted "METHOD URI VERSION". URI is the resource, so resource = '/' means home page. 
+      originServerRequest = method + ' ' + resource + ' ' + version
       # First header line is the host.
       originServerRequestHeader = "Host: " + hostname
 
