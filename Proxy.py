@@ -178,7 +178,7 @@ while True:
       # ~~~~ INSERT CODE ~~~~
 
       # Request line is formatted "METHOD URI VERSION".
-      originServerRequest = method + ' ' + URI + ' ' + version
+      originServerRequest = method + ' /' + URI + ' ' + version
       # First header line is the host.
       originServerRequestHeader = "Host: " + hostname
 
@@ -202,10 +202,17 @@ while True:
 
       # Get the response from the origin server
       # ~~~~ INSERT CODE ~~~~
+
+      # Receive response.
+      originServerResponse = originServerSocket.recv(BUFFER_SIZE)
+
       # ~~~~ END CODE INSERT ~~~~
 
       # Send the response to the client
       # ~~~~ INSERT CODE ~~~~
+
+
+
       # ~~~~ END CODE INSERT ~~~~
 
       # Create a new file in the cache for the requested file.
@@ -217,6 +224,10 @@ while True:
 
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
+
+      # Write the origin server's response to the cache file.
+      cacheFile.write(originServerResponse)
+
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
       print ('cache file closed')
