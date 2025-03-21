@@ -136,7 +136,9 @@ while True:
     # ~~~~ INSERT CODE ~~~~
 
     # Send cached response to client.
-    clientSocket.send(cacheData)
+    cacheData = ''.join(cacheData)
+    cacheResponse = cacheData.encode()
+    clientSocket.send(cacheResponse)
 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
