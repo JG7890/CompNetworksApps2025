@@ -147,6 +147,12 @@ while True:
     # Create a socket to connect to origin server
     # and store in originServerSocket
     # ~~~~ INSERT CODE ~~~~
+
+    # Create TCP socket to connect to origin server.
+    from socket import *
+    originServerSocket = socket(AF_INET, SOCK_STREAM)
+    import socket
+
     # ~~~~ END CODE INSERT ~~~~
 
     print ('Connecting to:\t\t' + hostname + '\n')
@@ -155,6 +161,11 @@ while True:
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
+
+      
+      originServerSocket.connect((hostname, 80))
+      
+
       # ~~~~ END CODE INSERT ~~~~
       print ('Connected to origin Server')
 
