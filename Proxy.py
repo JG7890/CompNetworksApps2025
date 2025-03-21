@@ -135,7 +135,8 @@ while True:
     # Send back response to client 
     # ~~~~ INSERT CODE ~~~~
 
-    
+    # Send cached response to client.
+    clientSocket.send(cacheData)
 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
