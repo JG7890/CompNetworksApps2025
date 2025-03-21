@@ -211,7 +211,8 @@ while True:
       # Send the response to the client
       # ~~~~ INSERT CODE ~~~~
 
-
+      # Send the retrieved response back to client on clientSocket now.
+      clientSocket.send(originServerResponse)
 
       # ~~~~ END CODE INSERT ~~~~
 
