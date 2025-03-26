@@ -211,6 +211,7 @@ while True:
       # Receive response.
       originServerResponse = originServerSocket.recv(BUFFER_SIZE)
 
+
       # ~~~~ END CODE INSERT ~~~~
 
       # Send the response to the client
@@ -231,8 +232,22 @@ while True:
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
 
-      # Write the origin server's response to the cache file.
-      cacheFile.write(originServerResponse)
+      # Write the origin server's response to the cache file, with a separate file just for headers.
+
+      # Separate headers and content:
+      cacheDataFile = open(cacheLocation + '.DATA', 'wb')
+      contentList = originServerResponse.splitlines(True)
+      headerList = []
+      #print(*contentList, sep='\n')
+      for line in contentList:
+        if line == b'\r\n':
+          break
+        headerList.append(line)
+          
+      cacheFile.write(b''.join(headerList))
+      cacheDataFile.write(b''.join(contentList))
+
+      cacheDataFile.close()
 
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
