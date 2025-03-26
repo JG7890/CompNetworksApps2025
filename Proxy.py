@@ -138,9 +138,14 @@ while True:
     # ~~~~ INSERT CODE ~~~~
 
     # Send cached response to client.
+    cacheDataFile = open(cacheLocation + '.DATA', 'rb')
+    clientSocket.send(cacheDataFile.read())
+    cacheDataFile.close()
+
     cacheData = ''.join(cacheData)
-    cacheResponse = cacheData.encode()
-    clientSocket.send(cacheResponse)
+    #cacheResponse = cacheData.encode()
+    #clientSocket.send(cacheResponse)
+
 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
