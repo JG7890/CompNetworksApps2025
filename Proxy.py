@@ -138,7 +138,7 @@ while True:
     # ~~~~ INSERT CODE ~~~~
 
     # Send cached response to client.
-    cacheDataFile = open(cacheLocation + '.DATA', 'rb')
+    cacheDataFile = open(cacheLocation + '.DATA', 'rb') # binary
     clientSocket.send(cacheDataFile.read())
     cacheDataFile.close()
 
@@ -237,22 +237,49 @@ while True:
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
 
-      # Write the origin server's response to the cache file, with a separate file just for headers.
-
-      # Separate headers and content:
-      cacheDataFile = open(cacheLocation + '.DATA', 'wb')
-      contentList = originServerResponse.splitlines(True)
-      headerList = []
-      #print(*contentList, sep='\n')
-      for line in contentList:
-        if line == b'\r\n':
+      # Decode just the headers from origin server response
+      headers = []
+      for line in originServerResponse.splitlines(True):
+        line = line.decode()
+        if line == '\r\n':
           break
-        headerList.append(line)
-          
-      cacheFile.write(b''.join(headerList))
-      cacheDataFile.write(b''.join(contentList))
+        headers.append(line)
 
-      cacheDataFile.close()
+
+      # Check if suitable to cache this response given the headers:
+      shouldCache = True
+      for line in headers:
+        tokens = line.split()
+        header = tokens[0]
+      
+        if header == "HTTP/1.1":
+          responseCode = tokens[1]
+          # Do not cache 301 or 302 responses, as it is not 'MUST' required in RFC.
+          if responseCode in ("301", "302"):
+            shouldCache = False
+
+        elif header == "Cache-Control:":
+          
+          for token in tokens:
+            if token == "no-store" or token == "no-cache" or token == "private":
+              shouldCache = False
+
+
+      if shouldCache:
+        # Cache headers in original file, cache full response in new file
+        cacheDataFile = open(cacheLocation + '.DATA', 'wb')
+        contentList = originServerResponse.splitlines(True)
+        headerList = []
+        
+        for line in contentList:
+          if line == b'\r\n':
+            break
+          headerList.append(line)
+            
+        cacheFile.write(b''.join(headerList))
+        cacheDataFile.write(b''.join(contentList))
+
+        cacheDataFile.close()
 
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
