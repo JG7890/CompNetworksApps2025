@@ -137,8 +137,27 @@ while True:
     # Send back response to client 
     # ~~~~ INSERT CODE ~~~~
 
-    # Check if client request is okay with a cached response.
     import email.utils
+    # Check if client request is okay with a cached response.
+    # Check client's request for Cache-Control directives: (compare maxAgeReq with cache date after this block)
+    maxAgeReq = sys.maxsize
+
+    for line in message.splitlines():
+      if len(line) == 0:
+        continue
+      tokens = line.split()
+      header = tokens[0]
+      if header == "Cache-Control:":
+        for token in tokens:
+          maxAgeToken = token.find("max-age")
+          if maxAgeToken != -1:
+            maxAgeReq = int(token.split('=')[1])
+            
+          elif token == "no-cache" or token == "no-store" or token == "private":
+            cacheFile.close()
+            raise Exception()
+
+    # Check cached response:
     for line in cacheData:
       tokens = line.split()
       header = tokens[0]
@@ -148,9 +167,9 @@ while True:
         date = email.utils.parsedate_to_datetime(dateStr)
         currentDate = email.utils.localtime()
         responseAge = (currentDate - date).total_seconds()
-        if responseAge >= 86400: # Also assume stale if response is 24 hours old.
+        if responseAge >= 86400 or responseAge > maxAgeReq: # Check age with client's max-age request. Also assume stale if response is 24 hours old.
           cacheFile.close()
-          print("Stale response. Not sending to client.")
+          print("Day-old response or stale for client request max-age. Not sending to client.")
           raise Exception()
 
 
