@@ -148,7 +148,7 @@ while True:
         date = email.utils.parsedate_to_datetime(dateStr)
         currentDate = email.utils.localtime()
         responseAge = (currentDate - date).total_seconds()
-        if responseAge > 86399: # Also ignore cache if response is 24 hours old.
+        if responseAge >= 86400: # Also assume stale if response is 24 hours old.
           cacheFile.close()
           print("Stale response. Not sending to client.")
           raise Exception()
@@ -164,10 +164,6 @@ while True:
                 cacheFile.close()
                 print("Stale response. Not sending to client.")
                 raise Exception()
-
-            elif token == "no-cache" or token == "no-store" or token == "private":
-              cacheFile.close()
-              raise Exception()
 
 
 
