@@ -137,6 +137,40 @@ while True:
     # Send back response to client 
     # ~~~~ INSERT CODE ~~~~
 
+    # Check if client request is okay with a cached response.
+    import email.utils
+    for line in cacheData:
+      tokens = line.split()
+      header = tokens[0]
+      if header == "Date:":
+        
+        dateStr = line.replace("Date: ", "")
+        date = email.utils.parsedate_to_datetime(dateStr)
+        currentDate = email.utils.localtime()
+        responseAge = (currentDate - date).total_seconds()
+        if responseAge > 86399: # Also ignore cache if response is 24 hours old.
+          cacheFile.close()
+          print("Stale response. Not sending to client.")
+          raise Exception()
+
+
+      elif header == "Cache-Control:":
+        for token in tokens:
+            maxAgeToken = token.find("max-age")
+            if maxAgeToken != -1:
+              maxAge = int(token.split('=')[1])
+              
+              if responseAge > maxAge:
+                cacheFile.close()
+                print("Stale response. Not sending to client.")
+                raise Exception()
+
+            elif token == "no-cache" or token == "no-store" or token == "private":
+              cacheFile.close()
+              raise Exception()
+
+
+
     # Send cached response to client.
     cacheDataFile = open(cacheLocation + '.DATA', 'rb') # binary
     clientSocket.send(cacheDataFile.read())
