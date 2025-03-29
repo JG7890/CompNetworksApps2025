@@ -1,3 +1,16 @@
+# Expires header handling:
+# I implemented this by checking for the Expires header on a cached 
+# response before sending it to the client. The RFC defines Expires
+# as being irrelevant if max-age exists in the request or response.
+# I am simply checking the Expires header and comparing its date
+# to the current date, but only if Cache-Control:max-age was not 
+# present in the headers. If the current date is past the Expires
+# date, the response is not sent to the client and it will be fetched
+# from the origin server.
+
+
+
+
 # Include the libraries for socket and system calls
 import socket
 import sys
@@ -141,6 +154,7 @@ while True:
     # Check if client request is okay with a cached response.
     # Check client's request for Cache-Control directives: (compare maxAgeReq with cache date after this block)
     maxAgeReq = sys.maxsize
+    hasMaxAge = False
 
     for line in message.splitlines():
       if len(line) == 0:
@@ -152,12 +166,14 @@ while True:
           maxAgeToken = token.find("max-age")
           if maxAgeToken != -1:
             maxAgeReq = int(token.split('=')[1])
+            hasMaxAge = True
             
-          elif token == "no-cache" or token == "no-store" or token == "private":
+          elif token == "no-cache" or token == "no-store" or token == "private" or token == "no-cache," or token == "no-store," or token == "private,":
             cacheFile.close()
             raise Exception()
 
     # Check cached response:
+    expireDate = None
     for line in cacheData:
       tokens = line.split()
       header = tokens[0]
@@ -183,7 +199,28 @@ while True:
                 cacheFile.close()
                 print("Stale response. Not sending to client.")
                 raise Exception()
+              
 
+      elif header == "Expires:":
+        expireDateStr = line.replace("Expires: ", "")
+        try:
+            expireDate = email.utils.parsedate_to_datetime(expireDateStr)
+        except:
+            expireDate = -1
+
+    # If expires header existed, and there was no max-age staleness, 
+    # compare the Expires date (Expires has lower priority than max-age).
+    if hasMaxAge == False and expireDate is not None:
+      if expireDate == -1:
+        cacheFile.close()
+        print("Expired response (invalid expiry date). Not sending to client.")
+        raise Exception()
+      else:
+        currentDate = email.utils.localtime()
+        if currentDate > expireDate:
+            cacheFile.close()
+            print("Expired response. Not sending to client.")
+            raise Exception()
 
 
     # Send cached response to client.
@@ -310,7 +347,7 @@ while True:
         elif header == "Cache-Control:":
           
           for token in tokens:
-            if token == "no-store" or token == "no-cache" or token == "private":
+            if token == "no-store" or token == "no-cache" or token == "private" or token == "no-store," or token == "no-cache," or token == "private,":
               shouldCache = False
 
 
