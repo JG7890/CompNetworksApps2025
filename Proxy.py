@@ -297,21 +297,28 @@ while True:
 
       # Check if suitable to cache this response given the headers:
       shouldCache = True
+      badCode = False
+      public = False
       for line in headers:
         tokens = line.split()
         header = tokens[0]
       
         if header == "HTTP/1.1":
           responseCode = tokens[1]
-          # Do not cache 301 or 302 responses, as it is not 'MUST' required in RFC.
-          if responseCode in ("301", "302"):
-            shouldCache = False
+          # Do not cache non-cacheable response codes other than these listed:
+          if responseCode != "200" and responseCode != "203" and responseCode != "206" and responseCode != "300" and responseCode != "301" and responseCode != "410":
+            badCode = True
 
         elif header == "Cache-Control:":
           
           for token in tokens:
             if token == "no-store" or token == "no-cache" or token == "private" or token == "no-store," or token == "no-cache," or token == "private,":
               shouldCache = False
+            elif token == "public" or token == "public,":
+              public = True
+
+      if badCode == True and public == False:
+        shouldCache = False
 
 
       if shouldCache:
