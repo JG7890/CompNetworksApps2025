@@ -153,7 +153,7 @@ while True:
           if maxAgeToken != -1:
             maxAgeReq = int(token.split('=')[1])
             
-          elif token == "no-cache" or token == "no-store" or token == "private":
+          elif token == "no-cache" or token == "no-store" or token == "private" or token == "no-cache," or token == "no-store," or token == "private,":
             cacheFile.close()
             raise Exception()
 
@@ -310,7 +310,7 @@ while True:
         elif header == "Cache-Control:":
           
           for token in tokens:
-            if token == "no-store" or token == "no-cache" or token == "private":
+            if token == "no-store" or token == "no-cache" or token == "private" or token == "no-store," or token == "no-cache," or token == "private,":
               shouldCache = False
 
 
