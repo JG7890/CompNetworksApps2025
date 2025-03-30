@@ -1,3 +1,5 @@
+# Bonus mark tasks:
+
 # Expires header handling:
 # I implemented this by checking for the Expires header on a cached 
 # response before sending it to the client. The RFC defines Expires
@@ -8,7 +10,10 @@
 # date, the response is not sent to the client and it will be fetched
 # from the origin server.
 
-
+# Hostname port number handling:
+# I implemented this by dissecting the hostname string 
+# (prior to connecting to origin server) and checking for a specified
+# port number. If it did not specify a port number, connect to port 80.
 
 
 # Include the libraries for socket and system calls
@@ -253,13 +258,23 @@ while True:
 
     print ('Connecting to:\t\t' + hostname + '\n')
     try:
+
+      # Dissecting hostname to get port number to connect to, if it exists in hostname. Otherwise connect to port 80.
+      temp = hostname.partition(":")
+      hostname = temp[0]
+      if len(temp[1]) > 0:
+        originServerPort = int(temp[2])
+      else:
+        originServerPort = 80
+      print(originServerPort)
+
       # Get the IP address for a hostname
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
-
+      
       # Connect to the requested host.
-      originServerSocket.connect((address, 80))
+      originServerSocket.connect((address, originServerPort))
       
 
       # ~~~~ END CODE INSERT ~~~~
