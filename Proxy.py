@@ -222,7 +222,7 @@ while True:
       # ~~~~ INSERT CODE ~~~~
 
       # Connect to the requested host.
-      originServerSocket.connect((hostname, 80))
+      originServerSocket.connect((address, 80))
       
 
       # ~~~~ END CODE INSERT ~~~~
