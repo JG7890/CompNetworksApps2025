@@ -1,0 +1,207 @@
+commit fd3eefc3f2d11e97317da484c3129287e7f85f3b
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sun Mar 30 10:56:16 2025 +1030
+
+    Bonus mark port number task
+    
+    Implemented hostname dissecting to check for and connect to specified port numbers in URL.
+
+commit 1c190c4f48a0e84f067074f630bfbb0647dbcf06
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sun Mar 30 10:32:13 2025 +1030
+
+    Small fix
+    
+    originServerSocket.connect() uses address rather than hostname. Did not change functionality but technically more correct.
+
+commit 2c28d48f08f3bc9e338d20d6f0da30ad8ac2a9e3
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sun Mar 30 10:03:51 2025 +1030
+
+    Improved response code handling
+    
+    301 responses are cacheable and 302, 404 responses and more are only cacheable if cache-control: public is specified in the response. Updated code to account for the full list of cacheable by default response codes, where the non-cacheable ones will be allowed if cache-control: public.
+
+commit c6e79150b86136cd6eb645a3fcd55d9df874a953
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sat Mar 29 11:47:45 2025 +1030
+
+    Expires header handling
+    
+    First bonus mark task. Handles Expires header. Header only relevant if Cache-Control:max-age was not present, if so, compares Expires date to current date to check if response is stale.
+
+commit e074c758bfca07c63398285ec911a1dd6f2ae943
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sat Mar 29 11:16:57 2025 +1030
+
+    Fixed bug in header handling
+    
+    Token directives were not being matched to if a comma (',') was present after the directive. (for example 'no-cache' and 'no-cache,' are both possible in a header's directive list depending on whether present in the final position or not)
+
+commit f3eef33b8921140a0f05437205b20e664d533c28
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sat Mar 29 10:21:33 2025 +1030
+
+    Copied changes to Proxy-bonus.py
+    
+    Copied recent changes to Proxy-bonus.py to start doing bonus mark tasks
+
+commit 224a0aca9d6bc767e5ccbee6f786adefc81864ac
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 28 12:55:12 2025 +1030
+
+    Checks client request max-age
+    
+    Now checks headers in client's request for Cache-Control: max-age to compare this value with the date as well as the cached response max-age. max-age directive seems to be fully working now with requests and responses.
+
+commit 86a4a983e7c62f3bac1d4339b1276b883f65d90b
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 28 11:27:43 2025 +1030
+
+    Removed unnecessary header checks
+    
+    Got slightly confused. Proxy does not need to check for no-store/no-cache/private when checking the cached response before sending to client, as I have already made sure the proxy will not cache responses including those directives. (This code section handles Date and max-age and checks if cached response is okay to send, it is not looking at the client's request itself as my previous commit comment implied.)
+
+commit 87e3a78109df90828f6cda6fc402715aa9ad0630
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 28 11:05:32 2025 +1030
+
+    Created Proxy-bonus.py
+    
+    Starting bonus mark tasks
+
+commit 8a30aecb72ce377801d136b7b33e5bd5ca5f3578
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 28 10:59:54 2025 +1030
+
+    Check if request accepts cached response
+    
+    Checking for headers Date and Cache-Control to verify that the client request is okay with the cached response. Max-age directive used to compare current and cached response date.
+
+commit 8bf5e8cd2bb2c25d68f0b840002d96afec31cd9d
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Thu Mar 27 10:55:28 2025 +1030
+
+    First header parsing
+    
+    Parsing headers to check whether or not to cache the response received from origin server, including Cache-Control and 301/302 response codes, so far.
+
+commit 73ded59182d33df4977f065894aae5c54709722e
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Wed Mar 26 11:37:18 2025 +1030
+
+    Responds to client with cached data
+    
+    Responds to client with cached data correctly with new cache implementation. Image caching now works and so should all file types.
+
+commit ccda97aa8ffe863fef68d28afbd4f9321648dc80
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Wed Mar 26 11:03:31 2025 +1030
+
+    Implemented better caching
+    
+    Response line and headers are now cached in their own file (the original one), with full response in its own file, allowing the original file to work with the readlines() in the skeleton code for all responses including image file responses (no longer have to try to translate all the random binary content into strings for no reason).
+
+commit 8b8d69a327928d41ba6af6fc57cd4878e4a1b4aa
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Sat Mar 22 11:29:05 2025 +1030
+
+    Make sure empty caches are not sent to client
+    
+    Empty cache files are not sent and instead a request is sent to origin server. This will likely help for when I implement the removing of expired caches.
+
+commit 0c841082302be85b6af0dbe6cfaeed7234a2edaa
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 16:15:11 2025 +1030
+
+    Fixed cache response issues
+    
+    Firstly, fixed response by converting the cache data (which is in a list) into a string, and encoding it. Secondly I had to make sure variable cacheData was set to the unencoded cacheData as a string instead of list (before being encoded) so it would print properly in the skeleton code without erroring.
+
+commit 25afeaeaafa918a19366cf13758a62a2ecda3284
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 15:02:16 2025 +1030
+
+    Sending cached response, but bugged
+    
+    Trying to send cached response but seems like it is still connecting to origin server.
+
+commit fdeaaccaac91fe0055f7875e20246a3e81fb2851
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 14:38:42 2025 +1030
+
+    Sending response back to client from origin server
+    
+    Now sending the response to the client. Going to handle sending cached response back next.
+
+commit 099c0f926e7ee53b7ec9ff182355b6fdc1453b2d
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 14:33:26 2025 +1030
+
+    Request to origin server corrected
+    
+    Figured out how to do this properly. The URI is the resource part, and the hostname header is the host. Leave out host name in request line. Checked the RFC to verify this. The URI is sent as an 'absolute path'.
+
+commit 3b997a54c2fa08a68631d93eb0b8c0fb7b2f39fe
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 13:08:54 2025 +1030
+
+    For previous commit
+    
+    Forgot to put in message for previous commit. Also receiving response from origin server and writing it to the cache file.
+
+commit 287d6dff30e96174d616c98a5952d956be30eb53
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 13:05:15 2025 +1030
+
+    Fixed request line
+    
+    Added the leading '/' to URI in request. No longer getting error code 400 from origin server.
+
+commit c5ff5b255a5f5e5d20d4af5baefefd84833c7809
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 12:40:52 2025 +1030
+
+    Sending HTTP request to origin server
+    
+    Constructing the HTTP request to the origin server. Request line and Host header line. Looks like it is sending the correct request format. Need to retrieve its response next.
+
+commit e3d265eca08c04983953a3791885f8973763cc7a
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 11:56:22 2025 +1030
+
+    Connecting to origin server
+    
+    Ignore previous commit. I meant only connecting to origin server so far.
+
+commit b35c8fca209a65b96ba8b5180df957b359be1691
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Fri Mar 21 11:44:40 2025 +1030
+
+    Connecting to origin server
+    
+    Retrieving response from origin server if no cache found, but not responding with the resources back to client yet.
+
+commit 178ae3546b2ffe4eeeccaf4004dba569ec677700
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Thu Mar 20 14:52:28 2025 +1030
+
+    Receiving requests
+    
+    Receiving requests. Tested with telnet and request is being received.
+
+commit 0c954ce7362f12c981f05867b8ff2e184e94bddc
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Thu Mar 20 14:18:57 2025 +1030
+
+    Receiving connections
+    
+    Now listens to requests and accepts them.
+
+commit 7a5fc6e69b13f1c7d3f75c1b9e1f0d4b376fdc84
+Author: JG7890 <140594451+JG7890@users.noreply.github.com>
+Date:   Thu Mar 20 13:47:23 2025 +1030
+
+    Started
+    
+    Created and bound TCP socket to address and port number successfully.
